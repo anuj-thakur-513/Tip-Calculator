@@ -3,6 +3,7 @@ package com.project.jettipcalculator
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
+import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.CornerSize
@@ -15,7 +16,6 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.res.fontResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -28,12 +28,13 @@ class MainActivity : ComponentActivity() {
             MyApp {
                 TopHeader()
             }
-        }   
+        }
     }
 }
 
+// Composable function for main surface of the UI
 @Composable
-fun MyApp(content: @Composable () -> Unit){
+fun MyApp(content: @Composable () -> Unit) {
     JetTipCalculatorTheme() {
         // A surface container
         Surface(color = MaterialTheme.colors.background) {
@@ -42,9 +43,9 @@ fun MyApp(content: @Composable () -> Unit){
     }
 }
 
-@Preview
+// Composable function for the top header which displays the final amount per person
 @Composable
-fun TopHeader(totalPerPerson: Double = 0.0){
+fun TopHeader(totalPerPerson: Double = 0.0) {
     Surface(
         modifier = Modifier
             .fillMaxWidth()
@@ -67,6 +68,24 @@ fun TopHeader(totalPerPerson: Double = 0.0){
                 style = MaterialTheme.typography.h4,
                 fontWeight = FontWeight.ExtraBold
             )
+        }
+    }
+}
+
+@Preview
+@Composable
+fun MainContent() {
+    Surface(
+        modifier = Modifier
+            .padding(2.dp)
+            .fillMaxWidth(),
+        shape = RoundedCornerShape(corner = CornerSize(8.dp)),
+        border = BorderStroke(width = 1.dp, color = Color.LightGray)
+    ) {
+        Column(
+            modifier = Modifier.padding(7.dp)
+        ) {
+
         }
     }
 }
