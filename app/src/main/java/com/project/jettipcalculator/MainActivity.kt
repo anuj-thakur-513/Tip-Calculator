@@ -13,10 +13,14 @@ import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Surface
 import androidx.compose.material.Text
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Add
+import androidx.compose.material.icons.filled.Remove
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
+import androidx.compose.ui.Alignment.Companion.CenterVertically
 import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -27,6 +31,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.project.jettipcalculator.components.InputField
 import com.project.jettipcalculator.ui.theme.JetTipCalculatorTheme
+import com.project.jettipcalculator.widgets.RoundIconButton
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -106,7 +111,11 @@ fun BillForm(
         shape = RoundedCornerShape(corner = CornerSize(8.dp)),
         border = BorderStroke(width = 1.dp, color = Color.LightGray)
     ) {
-        Column() {
+        Column(
+            modifier = Modifier.padding(6.dp),
+            verticalArrangement = Arrangement.Top,
+            horizontalAlignment = Alignment.Start
+        ) {
             InputField(valueState = totalBillState,
                 labelId = "Enter Bill",
                 enabled = true,
@@ -118,6 +127,36 @@ fun BillForm(
                     keyboardController?.hide()
                 }
             )
+            // showing the lower area with buttons and stuff if the value is valid
+            if (validState) {
+                Row(
+                    modifier = Modifier.padding(3.dp),
+                    horizontalArrangement = Arrangement.Start
+                ) {
+                    Text(
+                        text = "Split",
+                        modifier = Modifier.align(
+                            alignment = CenterVertically
+                        )
+                    )
+                    Spacer(modifier = Modifier.width(120.dp))
+                    Row(
+                        modifier = Modifier.padding(horizontal = 3.dp),
+                        horizontalArrangement = Arrangement.End
+                    ) {
+                        // adding the button for remove and add
+                        RoundIconButton(imageVector = Icons.Default.Remove, onClick = {
+                            /*TODO*/
+                        })
+
+                        RoundIconButton(imageVector = Icons.Default.Add, onClick = {
+                            /*TODO*/
+                        })
+                    }
+                }
+            } else {
+                Box() {}
+            }
         }
     }
 }
