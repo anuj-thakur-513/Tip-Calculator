@@ -201,7 +201,7 @@ fun BillForm(
                     verticalArrangement = Arrangement.Center,
                     horizontalAlignment = Alignment.CenterHorizontally
                 ) {
-                    Text(text = "33%")
+                    Text(text = "${(sliderPositionState.value * 100).toInt()}%")
                     Spacer(modifier = Modifier.height(14.dp))
 
                     // Slider
