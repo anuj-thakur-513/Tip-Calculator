@@ -16,6 +16,7 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.Remove
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
@@ -89,10 +90,26 @@ fun TopHeader(totalPerPerson: Double = 0.0) {
 
 @Composable
 fun MainContent() {
+    val splitByState = remember {
+        mutableStateOf(1)
+    }
+    // variable to set the max number of people
+    val range = IntRange(start = 1, endInclusive = 100)
+    // variable to store the tip amount
+    val tipAmountState = remember {
+        mutableStateOf(0.0)
+    }
+    // variable to store total bill per person
+    val totalPerPersonState = remember {
+        mutableStateOf(0.0)
+    }
+    // setting the bill form compose in a column
     Column(modifier = Modifier.padding(12.dp)) {
-        BillForm() {
-
-        }
+        BillForm(
+            splitByState = splitByState,
+            tipAmountState = tipAmountState,
+            totalPerPersonState = totalPerPersonState
+        ) { }
     }
 }
 
@@ -100,6 +117,10 @@ fun MainContent() {
 @Composable
 fun BillForm(
     modifier: Modifier = Modifier,
+    range: IntRange = 1..100,
+    splitByState: MutableState<Int>,
+    tipAmountState: MutableState<Double>,
+    totalPerPersonState: MutableState<Double>,
     onValChange: (String) -> Unit = {}
 ) {
     // remember the value entered by the user
@@ -118,32 +139,19 @@ fun BillForm(
     // variable for slider percentage
     val tipPercentage = (sliderPositionState.value * 100).toInt()
     // mutable to get the number of people
-    val splitByState = remember {
-        mutableStateOf(1)
-    }
-    // variable to set the max number of people
-    val range = IntRange(start = 1, endInclusive = 100)
-    // variable to store the tip amount
-    val tipAmountState = remember {
-        mutableStateOf(0.0)
-    }
-    // variable to store total bill per person
-    val totalPerPersonState = remember {
-        mutableStateOf(0.0)
-    }
 
     // adding the top header composable
     TopHeader(totalPerPersonState.value)
 
     Surface(
-        modifier = Modifier
+        modifier = modifier
             .padding(2.dp)
             .fillMaxWidth(),
         shape = RoundedCornerShape(corner = CornerSize(10.dp)),
         border = BorderStroke(width = 1.dp, color = Color.LightGray)
     ) {
         Column(
-            modifier = Modifier.padding(6.dp),
+            modifier = modifier.padding(6.dp),
             verticalArrangement = Arrangement.Top,
             horizontalAlignment = Alignment.Start
         ) {
@@ -167,18 +175,18 @@ fun BillForm(
             if (isValidBill) {
                 // split row
                 Row(
-                    modifier = Modifier.padding(3.dp),
+                    modifier = modifier.padding(3.dp),
                     horizontalArrangement = Arrangement.Start
                 ) {
                     Text(
                         text = "Split",
-                        modifier = Modifier.align(
+                        modifier = modifier.align(
                             alignment = CenterVertically
                         )
                     )
-                    Spacer(modifier = Modifier.width(120.dp))
+                    Spacer(modifier = modifier.width(120.dp))
                     Row(
-                        modifier = Modifier.padding(horizontal = 3.dp),
+                        modifier = modifier.padding(horizontal = 3.dp),
                         horizontalArrangement = Arrangement.End
                     ) {
                         // adding the button for remove and add
@@ -194,7 +202,7 @@ fun BillForm(
 
                         Text(
                             text = "${splitByState.value}",
-                            modifier = Modifier
+                            modifier = modifier
                                 .align(CenterVertically)
                                 .padding(start = 9.dp, end = 9.dp)
                         )
@@ -214,13 +222,13 @@ fun BillForm(
 
                 // Tip row
                 Row(
-                    modifier = Modifier.padding(horizontal = 3.dp, vertical = 12.dp)
+                    modifier = modifier.padding(horizontal = 3.dp, vertical = 12.dp)
                 ) {
                     Text(
                         text = "Tip",
-                        modifier = Modifier.align(alignment = CenterVertically)
+                        modifier = modifier.align(alignment = CenterVertically)
                     )
-                    Spacer(modifier = Modifier.width(200.dp))
+                    Spacer(modifier = modifier.width(200.dp))
                     Text(text = "$${tipAmountState.value}")
                 }
 
@@ -230,7 +238,7 @@ fun BillForm(
                     horizontalAlignment = Alignment.CenterHorizontally
                 ) {
                     Text(text = "${tipPercentage}%")
-                    Spacer(modifier = Modifier.height(14.dp))
+                    Spacer(modifier = modifier.height(14.dp))
 
                     // Slider
                     Slider(
@@ -249,7 +257,7 @@ fun BillForm(
                                 tipPercentage = tipPercentage
                             )
                         },
-                        modifier = Modifier.padding(horizontal = 16.dp),
+                        modifier = modifier.padding(horizontal = 16.dp),
                         steps = 5
                     )
                 }
