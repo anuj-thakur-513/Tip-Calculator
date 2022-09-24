@@ -1,12 +1,10 @@
 package com.project.jettipcalculator
 
 import android.os.Bundle
-import android.util.Log
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.layout.*
-import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.CornerSize
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardActions
@@ -24,7 +22,6 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Alignment.Companion.CenterVertically
 import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.text.font.FontWeight
@@ -91,7 +88,7 @@ fun TopHeader(totalPerPerson: Double = 0.0) {
 @Composable
 fun MainContent() {
     Column(modifier = Modifier.padding(12.dp)) {
-        BillForm(){
+        BillForm() {
 
         }
     }
@@ -116,7 +113,15 @@ fun BillForm(
     val sliderPositionState = remember {
         mutableStateOf(0f)
     }
+    // mutable to get the number of people
+    val splitByState = remember {
+        mutableStateOf(1)
+    }
+    // variable to set the max number of people
+    val range = IntRange(start = 1, endInclusive = 100)
+    // adding the top header composable
     TopHeader()
+
     Surface(
         modifier = Modifier
             .padding(2.dp)
@@ -141,77 +146,80 @@ fun BillForm(
                 }
             )
             // showing the lower area with buttons and stuff if the value is valid
-//            if (validState) {
-            // split row
-            Row(
-                modifier = Modifier.padding(3.dp),
-                horizontalArrangement = Arrangement.Start
-            ) {
-                Text(
-                    text = "Split",
-                    modifier = Modifier.align(
-                        alignment = CenterVertically
-                    )
-                )
-                Spacer(modifier = Modifier.width(120.dp))
+            if (isValidBill) {
+                // split row
                 Row(
-                    modifier = Modifier.padding(horizontal = 3.dp),
-                    horizontalArrangement = Arrangement.End
+                    modifier = Modifier.padding(3.dp),
+                    horizontalArrangement = Arrangement.Start
                 ) {
-                    // adding the button for remove and add
-                    RoundIconButton(imageVector = Icons.Default.Remove, onClick = {
-                        /*TODO*/
-                    })
-
                     Text(
-                        text = "2",
-                        modifier = Modifier
-                            .align(CenterVertically)
-                            .padding(start = 9.dp, end = 9.dp)
+                        text = "Split",
+                        modifier = Modifier.align(
+                            alignment = CenterVertically
+                        )
                     )
+                    Spacer(modifier = Modifier.width(120.dp))
+                    Row(
+                        modifier = Modifier.padding(horizontal = 3.dp),
+                        horizontalArrangement = Arrangement.End
+                    ) {
+                        // adding the button for remove and add
+                        RoundIconButton(imageVector = Icons.Default.Remove, onClick = {
+                            splitByState.value =
+                                if (splitByState.value > 1) splitByState.value - 1 else 1
+                        })
 
-                    RoundIconButton(imageVector = Icons.Default.Add, onClick = {
-                        /*TODO*/
-                    })
-                }
-            }
+                        Text(
+                            text = "${splitByState.value}",
+                            modifier = Modifier
+                                .align(CenterVertically)
+                                .padding(start = 9.dp, end = 9.dp)
+                        )
 
-            // Tip row
-            Row(
-                modifier = Modifier.padding(horizontal = 3.dp, vertical = 12.dp)
-            ) {
-                Text(
-                    text = "Tip",
-                    modifier = Modifier.align(alignment = CenterVertically)
-                )
-                Spacer(modifier = Modifier.width(200.dp))
-                Text(text = "$33.00")
-            }
-
-            // Column for percentage and slider
-            Column(
-                verticalArrangement = Arrangement.Center,
-                horizontalAlignment = Alignment.CenterHorizontally
-            ) {
-                Text(text = "33%")
-                Spacer(modifier = Modifier.height(14.dp))
-
-                // Slider
-                Slider(value = sliderPositionState.value,
-                    onValueChange = { newVal ->
-                        // changing the position of the slider
-                        sliderPositionState.value = newVal
-                    },
-                    modifier = Modifier.padding(horizontal = 16.dp),
-                    steps = 5,
-                    onValueChangeFinished = {
-
+                        RoundIconButton(imageVector = Icons.Default.Add, onClick = {
+                            if(splitByState.value < range.last){
+                                splitByState.value = splitByState.value + 1
+                            }
+                        })
                     }
-                )
+                }
+
+                // Tip row
+                Row(
+                    modifier = Modifier.padding(horizontal = 3.dp, vertical = 12.dp)
+                ) {
+                    Text(
+                        text = "Tip",
+                        modifier = Modifier.align(alignment = CenterVertically)
+                    )
+                    Spacer(modifier = Modifier.width(200.dp))
+                    Text(text = "$33.00")
+                }
+
+                // Column for percentage and slider
+                Column(
+                    verticalArrangement = Arrangement.Center,
+                    horizontalAlignment = Alignment.CenterHorizontally
+                ) {
+                    Text(text = "33%")
+                    Spacer(modifier = Modifier.height(14.dp))
+
+                    // Slider
+                    Slider(value = sliderPositionState.value,
+                        onValueChange = { newVal ->
+                            // changing the position of the slider
+                            sliderPositionState.value = newVal
+                        },
+                        modifier = Modifier.padding(horizontal = 16.dp),
+                        steps = 5,
+                        onValueChangeFinished = {
+
+                        }
+                    )
+                }
+            } else {
+                Box() {}
             }
-//            } else {
-//                Box() {}
-//            }
         }
     }
 }
