@@ -29,6 +29,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.project.jettipcalculator.components.InputField
 import com.project.jettipcalculator.ui.theme.JetTipCalculatorTheme
+import com.project.jettipcalculator.utils.calculateTotalTip
 import com.project.jettipcalculator.widgets.RoundIconButton
 
 class MainActivity : ComponentActivity() {
@@ -113,12 +114,19 @@ fun BillForm(
     val sliderPositionState = remember {
         mutableStateOf(0f)
     }
+    // variable for slider percentage
+    val tipPercentage = (sliderPositionState.value * 100).toInt()
     // mutable to get the number of people
     val splitByState = remember {
         mutableStateOf(1)
     }
     // variable to set the max number of people
     val range = IntRange(start = 1, endInclusive = 100)
+    // variable to store the tip amount
+    val tipAmountState = remember {
+        mutableStateOf(0.0)
+    }
+
     // adding the top header composable
     TopHeader()
 
@@ -177,7 +185,7 @@ fun BillForm(
                         )
 
                         RoundIconButton(imageVector = Icons.Default.Add, onClick = {
-                            if(splitByState.value < range.last){
+                            if (splitByState.value < range.last) {
                                 splitByState.value = splitByState.value + 1
                             }
                         })
@@ -193,7 +201,7 @@ fun BillForm(
                         modifier = Modifier.align(alignment = CenterVertically)
                     )
                     Spacer(modifier = Modifier.width(200.dp))
-                    Text(text = "$33.00")
+                    Text(text = "$${tipAmountState.value}")
                 }
 
                 // Column for percentage and slider
@@ -201,7 +209,7 @@ fun BillForm(
                     verticalArrangement = Arrangement.Center,
                     horizontalAlignment = Alignment.CenterHorizontally
                 ) {
-                    Text(text = "${(sliderPositionState.value * 100).toInt()}%")
+                    Text(text = "${tipPercentage}%")
                     Spacer(modifier = Modifier.height(14.dp))
 
                     // Slider
@@ -209,6 +217,11 @@ fun BillForm(
                         onValueChange = { newVal ->
                             // changing the position of the slider
                             sliderPositionState.value = newVal
+                            tipAmountState.value =
+                                calculateTotalTip(
+                                    totalBill = totalBillState.value.toDouble(),
+                                    tipPercentage = tipPercentage
+                                )
                         },
                         modifier = Modifier.padding(horizontal = 16.dp),
                         steps = 5,
