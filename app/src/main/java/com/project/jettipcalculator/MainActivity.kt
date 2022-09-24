@@ -29,6 +29,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.project.jettipcalculator.components.InputField
 import com.project.jettipcalculator.ui.theme.JetTipCalculatorTheme
+import com.project.jettipcalculator.utils.calculateTotalBillPerPerson
 import com.project.jettipcalculator.utils.calculateTotalTip
 import com.project.jettipcalculator.widgets.RoundIconButton
 
@@ -126,9 +127,13 @@ fun BillForm(
     val tipAmountState = remember {
         mutableStateOf(0.0)
     }
+    // variable to store total bill per person
+    val totalPerPersonState = remember {
+        mutableStateOf(0.0)
+    }
 
     // adding the top header composable
-    TopHeader()
+    TopHeader(totalPerPersonState.value)
 
     Surface(
         modifier = Modifier
@@ -151,6 +156,11 @@ fun BillForm(
                     onValChange(totalBillState.value.trim())
 
                     keyboardController?.hide()
+                    totalPerPersonState.value = calculateTotalBillPerPerson(
+                        totalBill = totalBillState.value.toDouble(),
+                        splitBy = splitByState.value,
+                        tipPercentage = tipPercentage
+                    )
                 }
             )
             // showing the lower area with buttons and stuff if the value is valid
@@ -175,6 +185,11 @@ fun BillForm(
                         RoundIconButton(imageVector = Icons.Default.Remove, onClick = {
                             splitByState.value =
                                 if (splitByState.value > 1) splitByState.value - 1 else 1
+                            totalPerPersonState.value = calculateTotalBillPerPerson(
+                                totalBill = totalBillState.value.toDouble(),
+                                splitBy = splitByState.value,
+                                tipPercentage = tipPercentage
+                            )
                         })
 
                         Text(
@@ -188,6 +203,11 @@ fun BillForm(
                             if (splitByState.value < range.last) {
                                 splitByState.value = splitByState.value + 1
                             }
+                            totalPerPersonState.value = calculateTotalBillPerPerson(
+                                totalBill = totalBillState.value.toDouble(),
+                                splitBy = splitByState.value,
+                                tipPercentage = tipPercentage
+                            )
                         })
                     }
                 }
@@ -213,7 +233,8 @@ fun BillForm(
                     Spacer(modifier = Modifier.height(14.dp))
 
                     // Slider
-                    Slider(value = sliderPositionState.value,
+                    Slider(
+                        value = sliderPositionState.value,
                         onValueChange = { newVal ->
                             // changing the position of the slider
                             sliderPositionState.value = newVal
@@ -222,16 +243,16 @@ fun BillForm(
                                     totalBill = totalBillState.value.toDouble(),
                                     tipPercentage = tipPercentage
                                 )
+                            totalPerPersonState.value = calculateTotalBillPerPerson(
+                                totalBill = totalBillState.value.toDouble(),
+                                splitBy = splitByState.value,
+                                tipPercentage = tipPercentage
+                            )
                         },
                         modifier = Modifier.padding(horizontal = 16.dp),
-                        steps = 5,
-                        onValueChangeFinished = {
-
-                        }
+                        steps = 5
                     )
                 }
-            } else {
-                Box() {}
             }
         }
     }
