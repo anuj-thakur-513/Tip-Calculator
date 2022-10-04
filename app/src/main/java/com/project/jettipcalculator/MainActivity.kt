@@ -51,6 +51,7 @@ fun MyApp(content: @Composable () -> Unit) {
     JetTipCalculatorTheme() {
         // A surface container
         Surface(
+            modifier = Modifier.fillMaxSize(),
             color = MaterialTheme.colors.background
         ) {
             content()
@@ -67,7 +68,7 @@ fun TopHeader(totalPerPerson: Double = 0.0) {
             .height(150.dp)
             .padding(15.dp),
         shape = RoundedCornerShape(CornerSize(12.dp)),
-        color = Color(0xFFE9D7F7)
+        color = MaterialTheme.colors.primary
     ) {
         Column(
             modifier = Modifier.padding(12.dp),
@@ -77,12 +78,14 @@ fun TopHeader(totalPerPerson: Double = 0.0) {
             val total = "%.2f".format(totalPerPerson)
             Text(
                 text = "Total Per Person",
-                style = MaterialTheme.typography.h5
+                style = MaterialTheme.typography.h5,
+                color = MaterialTheme.colors.onBackground
             )
             Text(
                 text = "$$total",
                 style = MaterialTheme.typography.h4,
-                fontWeight = FontWeight.ExtraBold
+                fontWeight = FontWeight.ExtraBold,
+                color = MaterialTheme.colors.onBackground
             )
         }
     }
@@ -94,7 +97,7 @@ fun MainContent() {
         mutableStateOf(1)
     }
     // variable to set the max number of people
-    val range = IntRange(start = 1, endInclusive = 100)
+    val range = IntRange(start = 1, endInclusive = 10)
     // variable to store the tip amount
     val tipAmountState = remember {
         mutableStateOf(0.0)
@@ -108,6 +111,7 @@ fun MainContent() {
         BillForm(
             splitByState = splitByState,
             tipAmountState = tipAmountState,
+            range = range,
             totalPerPersonState = totalPerPersonState
         ) { }
     }
@@ -117,7 +121,7 @@ fun MainContent() {
 @Composable
 fun BillForm(
     modifier: Modifier = Modifier,
-    range: IntRange = 1..100,
+    range: IntRange,
     splitByState: MutableState<Int>,
     tipAmountState: MutableState<Double>,
     totalPerPersonState: MutableState<Double>,
